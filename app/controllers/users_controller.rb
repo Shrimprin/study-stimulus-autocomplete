@@ -12,7 +12,7 @@ class UsersController < ApplicationController
 
   # GET /users/new
   def new
-    @user = User.new
+    @user = User.find_by(name: 'ユーザー30')
   end
 
   # GET /users/1/edit

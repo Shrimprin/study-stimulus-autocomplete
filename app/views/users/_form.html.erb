@@ -1,22 +1,49 @@
-<%= form_with(model: user) do |form| %>
-  <% if user.errors.any? %>
-    <div style="color: red">
-      <h2><%= pluralize(user.errors.count, "error") %> prohibited this user from being saved:</h2>
+<%= form_with(model: @user, local: true, data: { controller: "user"}) do |f| %>
 
-      <ul>
-        <% user.errors.each do |error| %>
-          <li><%= error.full_message %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
+  <%# 　#------- セレクトボックス --------  %>
+  <%= f.label "アドレス帳から追加", for: "selectAddresses", class: "form-label" %>
+  <%= f.select :selected_id,
+      @user.address_books.map { |address_book| [address_book.full_name, address_book.id]}, 
+                                     { include_blank: "選択なし" }, 
+                                     { class: "form-select mb-2", id: "selectAddresses",
+                                     data: { user_target: "select_addresses", action: "change->user#selectAddressBook",
+                                     json: "#{@user.address_books.to_json if @user.address_books.present?}" 
+                                     } } %>
 
-  <div>
-    <%= form.label :name, style: "display: block" %>
-    <%= form.text_field :name %>
+  <%# #------- 氏名 --------  %>
+  <%= f.label "氏名", class: "form-label" %>
+  <%= f.text_field :full_name, class: "form-control", data: { user_target: "full_name" } %>
+
+  <%# #------- 生年月日 --------  %>
+  <%= f.label "生年月日", class: "form-label" %>
+  <div data-user-target="birthday">
+    <%= f.date_select :birthday,
+          {use_month_numbers: true,
+          start_year: 1950,
+          end_year: (Time.now.year - 10),
+          default: Date.new(1990, 1, 1),
+          date_separator: '/ '},
+          {class: "form__custom"} %>
   </div>
 
-  <div>
-    <%= form.submit %>
+  <%# #------- 年齢 --------  %>
+  <%= f.label "年齢", class: "form-label" %>
+  <%= f.number_field :age, class: "form-control", data: { user_target: "age" } %>
+
+  <%# #------- 性別 --------  %>
+  <div data-user-target="gender">
+    <%= f.label "性別", class: "form-label"%>
+    <%= f.radio_button :gender, "男" , class: "form-check-input", id: "genderMale", checked: true %>
+    <%= f.label "男性", for: "genderMale" %>
+    <%= f.radio_button :gender, "女" , class: "form-check-input", id: "genderFemale" %>
+    <%= f.label "女性", for: "genderFemale" %>
   </div>
+
+  <%# #------- 住所 --------  %>
+  <%= f.label "住所", class: "form-label" %>
+  <%= f.text_field :address, class: "form-control", data: { user_target: "address"} %>
+
+  <%# #------- 電話番号 --------  %>
+  <%= f.label "電話番号", class: "form-label" %>
+  <%= f.text_field :phone_number, class: "form-control", data: { user_target: "phone_number" } %>
 <% end %>

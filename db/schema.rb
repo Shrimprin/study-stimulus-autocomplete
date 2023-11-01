@@ -10,16 +10,23 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_10_28_222028) do
-  create_table "users", force: :cascade do |t|
+ActiveRecord::Schema[7.0].define(version: 2023_11_01_032241) do
+  create_table "address_books", force: :cascade do |t|
     t.string "full_name"
+    t.integer "user_id"
     t.date "birthday"
     t.integer "age"
     t.string "gender"
     t.string "address"
     t.string "phone_number"
+    t.index ["user_id"], name: "index_address_books_on_user_id"
+  end
+
+  create_table "users", force: :cascade do |t|
+    t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "address_books", "users"
 end
